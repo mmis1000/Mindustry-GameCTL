@@ -1,7 +1,7 @@
 {
-  "name": "ExamplePlugin",
-  "author": "Anuke",
-  "main": "example.ExamplePlugin",
-  "description": "A plugin to demonstrate some basic features.",
+  "name": "GameCTL",
+  "author": "mmis1000",
+  "main": "me.mmis1000.mindustryGameCTL.Main",
+  "description": "A plugin to expose ability of controlling game state.",
   "version": 1.0
 }
