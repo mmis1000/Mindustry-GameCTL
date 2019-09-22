@@ -38,6 +38,7 @@ public class Main extends Plugin {
         });
     }
 
+    //register commands that player can invoke within the game
     @Override
     public void registerClientCommands(CommandHandler handler) {
         handler.<Player>register("pause", "Pause the game.", (args, player) -> {
@@ -99,7 +100,7 @@ public class Main extends Plugin {
         });
     }
 
-    //register commands that player can invoke in-game
+    //register commands that player can invoke from server console
     @Override
     public void registerServerCommands(CommandHandler handler) {
         handler.<Player>register("pause", "Pause the game.", (args, player) -> {
