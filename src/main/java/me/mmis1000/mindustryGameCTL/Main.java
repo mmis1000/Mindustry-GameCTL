@@ -8,8 +8,10 @@ import io.anuke.arc.util.Log;
 import io.anuke.mindustry.Vars;
 import io.anuke.mindustry.core.GameState;
 import io.anuke.mindustry.entities.type.Player;
+import io.anuke.mindustry.game.EventType;
 import io.anuke.mindustry.game.EventType.PlayerJoin;
 import io.anuke.mindustry.game.Gamemode;
+import io.anuke.mindustry.game.Team;
 import io.anuke.mindustry.gen.Call;
 import io.anuke.mindustry.maps.Map;
 import io.anuke.mindustry.maps.MapException;
@@ -18,9 +20,11 @@ import io.anuke.mindustry.plugin.Plugin;
 import java.io.IOException;
 import java.net.BindException;
 
+@SuppressWarnings("unused")
 public class Main extends Plugin {
 
     //    register event handlers and create variables in the constructor
+    @SuppressWarnings("unused")
     public Main() {
         //listen for a block selection event
         Events.on(PlayerJoin.class, event -> {
@@ -54,7 +58,7 @@ public class Main extends Plugin {
             Call.sendMessage("[GameCTL] Game continues");
         });
 
-        handler.<Player>register("run-wave", "[on/off]", "Toggle wave run.", (arg, player)  -> {
+        handler.<Player>register("run-wave", "[on/off]", "Toggle wave run.", (arg, player) -> {
             if (arg.length == 0) {
                 player.sendMessage("[GameCTL] Wave Timer is '" + Vars.state.rules.waveTimer + "' currently, use /run-wave [on|off] to toggle");
                 return;
@@ -64,6 +68,34 @@ public class Main extends Plugin {
 
             Vars.state.rules.waveTimer = value;
             Call.sendMessage("Wave Timer toggled to '" + value + "'.");
+        });
+
+        handler.<Player>register("run-now", "Trigger the next wave.", (arg, player) -> {
+            if (!player.isAdmin) {
+                player.sendMessage("This command is admin only");
+            }
+
+            if (!Vars.state.is(GameState.State.playing)) {
+                player.sendMessage("Not playing. Unpause first.");
+            } else {
+                Vars.logic.runWave();
+                Call.sendMessage("Wave spawned.");
+            }
+        });
+
+        handler.<Player>register("gameover", "Reset the game", (arg, player) -> {
+            if (!player.isAdmin) {
+                player.sendMessage("This command is admin only");
+            }
+
+            if (Vars.state.is(GameState.State.menu)) {
+                Log.info("Not playing a map.");
+                return;
+            }
+
+            Log.info("&lyCore destroyed.");
+
+            Events.fire(new EventType.GameOverEvent(Team.crux));
         });
     }
 
